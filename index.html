@@ -7,19 +7,21 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&display=swap" rel="stylesheet">
     <style>
+        /* === BASE DARK THEME === */
         body { 
             background-color: #09090b; 
             color: #f4f4f5; 
             font-family: 'Outfit', sans-serif;
             background-image: radial-gradient(circle at 50% 0%, #18181b 0%, #09090b 70%);
             background-attachment: fixed;
+            transition: background-color 0.4s ease, color 0.4s ease;
         }
         
         .gold-bg { background: linear-gradient(135deg, #fde047 0%, #fbbf24 50%, #d97706 100%); }
         .gold-text { background: linear-gradient(135deg, #fde047, #d97706); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
-        .glass-panel { background: rgba(24, 24, 27, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(63, 63, 70, 0.5); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(251, 191, 36, 0.1); }
-        .card-dark { background: linear-gradient(180deg, #18181b 0%, #121214 100%); border: 1px solid #27272a; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5); }
+        .glass-panel { background: rgba(24, 24, 27, 0.85); backdrop-filter: blur(16px); border: 1px solid rgba(63, 63, 70, 0.5); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(251, 191, 36, 0.1); transition: all 0.4s ease; }
+        .card-dark { background: linear-gradient(180deg, #18181b 0%, #121214 100%); border: 1px solid #27272a; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5); transition: all 0.4s ease; }
         
         .progress-track { background: #27272a; border-radius: 999px; overflow: hidden; height: 10px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); }
         .progress-fill { height: 100%; background: linear-gradient(90deg, #d97706, #fde047); transition: width 0.8s ease; }
@@ -33,12 +35,32 @@
         @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-up { animation: fadeUp 0.6s ease-out forwards; }
 
+        /* Toast Notifications */
         #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
         .toast { background: #18181b; border-left: 4px solid #ef4444; color: white; padding: 16px 24px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); font-weight: bold; font-size: 0.875rem; animation: slideDown 0.3s ease-out forwards, fadeOut 0.3s ease-in 2.7s forwards; }
         .toast-success { border-left-color: #fbbf24; }
         .toast-info { border-left-color: #3b82f6; }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeOut { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-20px); } }
+
+        /* LIGHT THEME OVERRIDES */
+        body.light-theme { background-color: #f8fafc !important; background-image: radial-gradient(circle at 50% 0%, #ffffff 0%, #f1f5f9 70%) !important; color: #0f172a !important; }
+        body.light-theme .text-white { color: #0f172a !important; }
+        body.light-theme .text-zinc-400, body.light-theme .text-zinc-500 { color: #64748b !important; }
+        body.light-theme .text-zinc-300 { color: #475569 !important; }
+        
+        body.light-theme .bg-zinc-900, body.light-theme .bg-zinc-900\/50 { background-color: #ffffff !important; border-color: #cbd5e1 !important; color: #0f172a !important; }
+        body.light-theme .border-zinc-700 { border-color: #cbd5e1 !important; }
+        
+        body.light-theme .card-dark { background: #ffffff !important; border-color: #e2e8f0 !important; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.05) !important; }
+        body.light-theme .glass-panel { background: rgba(255,255,255,0.95) !important; border-color: rgba(226,232,240,1) !important; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.08) !important;}
+        
+        body.light-theme .box-base { background-color: #f8fafc !important; border-color: #cbd5e1 !important; color: #64748b !important; }
+        body.light-theme .bg-zinc-800 { background-color: #e2e8f0 !important; color: #0f172a !important; }
+        body.light-theme .progress-track { background-color: #e2e8f0 !important; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05) !important; }
+        body.light-theme .toast { background-color: #ffffff !important; color: #0f172a !important; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        
+        body.light-theme .gold-text { background: linear-gradient(135deg, #d97706, #92400e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     </style>
 </head>
 <body class="min-h-screen pb-24">
@@ -69,9 +91,16 @@
                     <p id="save-wallet" class="text-sm font-bold gold-text">0</p>
                 </div>
             </div>
-            <div class="flex flex-col gap-1 items-end border-l border-zinc-700 pl-4 ml-2">
-                <button onclick="handleLogout()" class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider transition-colors hover:text-white">Log Out</button>
-                <button onclick="triggerResetApp()" class="text-[10px] font-black text-red-500 uppercase tracking-wider transition-colors hover:text-red-400">Wipe Data</button>
+            
+            <div class="flex items-center border-l border-zinc-700 pl-4 ml-2 gap-4">
+                <button onclick="toggleTheme()" class="text-zinc-400 hover:text-yellow-500 transition-colors focus:outline-none">
+                    <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
+                    <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                </button>
+                <div class="flex flex-col gap-1 items-end border-l border-zinc-700 pl-4">
+                    <button onclick="handleLogout()" class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider transition-colors hover:text-white">Log Out</button>
+                    <button onclick="triggerResetApp()" class="text-[10px] font-black text-red-500 uppercase tracking-wider transition-colors hover:text-red-400">Wipe Data</button>
+                </div>
             </div>
         </div>
     </header>
@@ -86,12 +115,10 @@
                     <label class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Your Full Name</label>
                     <input type="text" id="auth-username" placeholder="e.g. John Doe" class="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-xl focus:border-yellow-500 outline-none text-white mt-1">
                 </div>
-                
                 <div>
                     <label class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Email Address</label>
                     <input type="email" id="auth-email" placeholder="you@example.com" class="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-xl focus:border-yellow-500 outline-none text-white mt-1">
                 </div>
-                
                 <div>
                     <label class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Password</label>
                     <input type="password" id="auth-pass" placeholder="••••••••" class="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-xl focus:border-yellow-500 outline-none text-white mt-1">
@@ -99,7 +126,6 @@
             </div>
 
             <button id="btn-login" onclick="handleLogin()" class="w-full gold-bg text-yellow-950 py-4 rounded-xl font-black hover:scale-105 transition-transform">SIGN IN</button>
-            
             <button id="btn-signup" onclick="executeSignup()" class="hidden w-full gold-bg text-yellow-950 py-4 rounded-xl font-black hover:scale-105 transition-transform">CREATE ACCOUNT</button>
             
             <p id="auth-toggle-text" class="text-sm text-zinc-500 mt-6">Don't have an account? <a onclick="toggleAuthMode(true)" class="text-yellow-500 font-bold hover:underline cursor-pointer">Sign up</a></p>
@@ -289,7 +315,26 @@
     </div>
 
     <script>
-        // --- 0. HELPERS & NOTIFICATIONS ---
+        // --- 0. THEME SWITCHER LOGIC ---
+        let isLightMode = localStorage.getItem('vt_theme') === 'light';
+        function applyTheme() {
+            if (isLightMode) {
+                document.body.classList.add('light-theme');
+                document.getElementById('icon-moon').classList.add('hidden');
+                document.getElementById('icon-sun').classList.remove('hidden');
+            } else {
+                document.body.classList.remove('light-theme');
+                document.getElementById('icon-moon').classList.remove('hidden');
+                document.getElementById('icon-sun').classList.add('hidden');
+            }
+        }
+        function toggleTheme() {
+            isLightMode = !isLightMode;
+            localStorage.setItem('vt_theme', isLightMode ? 'light' : 'dark');
+            applyTheme();
+        }
+
+        // --- 1. HELPERS & NOTIFICATIONS ---
         function showToast(m, t='error'){
             const c=document.getElementById('toast-container'); const e=document.createElement('div');
             e.className=`toast ${t==='success'?'toast-success':t==='info'?'toast-info':''}`; e.innerText=m;
@@ -298,7 +343,7 @@
         function closeModal(id){ document.getElementById(id).classList.add('hidden'); }
         function openModal(id){ document.getElementById(id).classList.remove('hidden'); }
 
-        // --- 1. STATE & AUTH ---
+        // --- 2. AUTHENTICATION WITH LOCAL DATABASE ---
         let currentUser = localStorage.getItem('vt_active_user');
         let currentUsername = localStorage.getItem('vt_active_name');
 
@@ -310,10 +355,10 @@
         let activeGoalIdForDeposit = null, goalToDelete = null, pendingIncomeProcess = { type: null, totalAmount: 0, freq: 'Month' };
 
         window.onload = () => {
+            applyTheme();
             if (currentUser) showDashboard();
         };
 
-        // UI Toggling between Login and Signup
         function toggleAuthMode(isSignup) {
             document.getElementById('auth-title').innerText = isSignup ? "Create Account" : "Welcome Back";
             document.getElementById('auth-subtitle').innerText = isSignup ? "Enter your details to get started." : "Sign in to sync your finances.";
@@ -325,32 +370,61 @@
         }
 
         function handleLogin() {
-            const email = document.getElementById('auth-email').value;
+            const email = document.getElementById('auth-email').value.trim();
             const pass = document.getElementById('auth-pass').value;
-            if(email.length > 3 && pass.length >= 4) {
+            
+            // Pull the "database" of registered users
+            let usersDB = JSON.parse(localStorage.getItem('vt_users_db')) || {};
+
+            if(usersDB[email] && usersDB[email].password === pass) {
+                // Login Success: Retrieve specific data for this email
                 localStorage.setItem('vt_active_user', email);
+                localStorage.setItem('vt_active_name', usersDB[email].name);
                 currentUser = email;
-                // If name exists in local storage from a previous signup, use it.
-                currentUsername = localStorage.getItem('vt_active_name') || "User";
+                currentUsername = usersDB[email].name;
                 showDashboard();
-            } else { showToast("Invalid credentials."); }
+            } else { 
+                showToast("Invalid email or password."); 
+            }
         }
 
         function executeSignup() {
-            const name = document.getElementById('auth-username').value;
-            const email = document.getElementById('auth-email').value;
+            const name = document.getElementById('auth-username').value.trim();
+            const email = document.getElementById('auth-email').value.trim();
             const pass = document.getElementById('auth-pass').value;
+            
             if(name.length > 1 && email.length > 3 && pass.length >= 4) {
+                let usersDB = JSON.parse(localStorage.getItem('vt_users_db')) || {};
+                
+                // Prevent duplicate accounts
+                if(usersDB[email]) {
+                    showToast("Account already exists! Please Sign in.", "info");
+                    return;
+                }
+
+                // Save new user to the local "database"
+                usersDB[email] = { name: name, password: pass };
+                localStorage.setItem('vt_users_db', JSON.stringify(usersDB));
+
+                // Log the new user in instantly
                 localStorage.setItem('vt_active_user', email);
                 localStorage.setItem('vt_active_name', name);
-                currentUser = email;
+                currentUser = email; 
                 currentUsername = name;
+                
                 showToast("Account created!", "success");
                 setTimeout(() => showDashboard(), 1000);
-            } else { showToast("Please fill all fields (password min 4 chars)."); }
+            } else { 
+                showToast("Please fill all fields (password min 4 chars)."); 
+            }
         }
 
-        function handleLogout() { localStorage.removeItem('vt_active_user'); location.reload(); }
+        function handleLogout() { 
+            localStorage.removeItem('vt_active_user'); 
+            localStorage.removeItem('vt_active_name'); // Clear active session, but keep the DB
+            location.reload(); 
+        }
+        
         function triggerResetApp() { openModal('reset-confirm-modal'); }
         function executeResetApp() { localStorage.clear(); location.reload(); }
 
@@ -359,20 +433,16 @@
             document.getElementById('app-dashboard').classList.remove('hidden');
             document.getElementById('wallet-balances').classList.remove('hidden');
             
-            // Set and show Username in header
             if(currentUsername) {
                 const headName = document.getElementById('header-username');
                 headName.innerText = currentUsername;
                 headName.classList.remove('hidden');
             }
 
-            renderIncomeSection();
-            renderExpenses();
-            renderGoals();
-            updateHeaderBalances();
+            renderIncomeSection(); renderExpenses(); renderGoals(); updateHeaderBalances();
         }
 
-        // --- 2. INCOME ---
+        // --- 3. INCOME ---
         function renderIncomeSection() {
             const sActive = document.getElementById('salary-active-state'), sSetup = document.getElementById('salary-setup-state');
             const bActive = document.getElementById('business-active-state'), bSetup = document.getElementById('business-setup-state');
@@ -431,7 +501,7 @@
             setTimeout(() => showToast("Income processed!", "success"), 1000);
         }
 
-        // --- 3. EXPENSES ---
+        // --- 4. EXPENSES ---
         function openExpenseModal() { document.getElementById('exp-purpose').value = ''; document.getElementById('exp-amount').value = ''; openModal('expense-modal'); }
         function processExpense() {
             const src = document.getElementById('exp-source').value, p = document.getElementById('exp-purpose').value, a = parseFloat(document.getElementById('exp-amount').value);
@@ -466,7 +536,7 @@
         }
         function saveIncomeData() { localStorage.setItem('vt_income_data', JSON.stringify(incomeState)); }
 
-        // --- 4. VAULTS ---
+        // --- 5. VAULTS ---
         function toggleForm() { document.getElementById('setup-form').classList.toggle('hidden'); document.getElementById('time-preview').innerText = ''; }
         function calculateTimePreview() {
             const p = parseFloat(document.getElementById('goal-price').value), a = parseFloat(document.getElementById('save-amount').value), i = document.getElementById('goal-item').value;
