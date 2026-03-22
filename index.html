@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>VaultTracker</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&display=swap" rel="stylesheet">
@@ -26,7 +26,7 @@
         .progress-track { background: #27272a; border-radius: 999px; overflow: hidden; height: 10px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5); }
         .progress-fill { height: 100%; background: linear-gradient(90deg, #d97706, #fde047); transition: width 0.8s ease; }
 
-        .box-base { transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; border-radius: 0.75rem; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.05em; cursor: pointer; position: relative; overflow: hidden; background-color: #27272a; border: 1px solid #3f3f46; color: #a1a1aa; }
+        .box-base { transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.05em; cursor: pointer; position: relative; overflow: hidden; background-color: #27272a; border: 1px solid #3f3f46; color: #a1a1aa; }
         .box-fill { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(135deg, #fde047, #fbbf24, #d97706); z-index: 1; transition: height 0.5s ease; }
         .box-text { position: relative; z-index: 2; }
         .box-saved { box-shadow: 0 4px 15px rgba(217, 119, 6, 0.4); border: none; }
@@ -36,8 +36,8 @@
         .animate-fade-up { animation: fadeUp 0.6s ease-out forwards; }
 
         /* Toast Notifications */
-        #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
-        .toast { background: #18181b; border-left: 4px solid #ef4444; color: white; padding: 16px 24px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); font-weight: bold; font-size: 0.875rem; animation: slideDown 0.3s ease-out forwards, fadeOut 0.3s ease-in 2.7s forwards; }
+        #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; width: 90%; max-width: 400px; }
+        .toast { background: #18181b; border-left: 4px solid #ef4444; color: white; padding: 16px 20px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); font-weight: bold; font-size: 0.875rem; animation: slideDown 0.3s ease-out forwards, fadeOut 0.3s ease-in 2.7s forwards; }
         .toast-success { border-left-color: #fbbf24; }
         .toast-info { border-left-color: #3b82f6; }
         @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
@@ -59,530 +59,36 @@
         body.light-theme .bg-zinc-800 { background-color: #e2e8f0 !important; color: #0f172a !important; }
         body.light-theme .progress-track { background-color: #e2e8f0 !important; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05) !important; }
         body.light-theme .toast { background-color: #ffffff !important; color: #0f172a !important; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        
         body.light-theme .gold-text { background: linear-gradient(135deg, #d97706, #92400e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     </style>
 </head>
-<body class="min-h-screen pb-24">
+<body class="min-h-screen pb-24 overflow-x-hidden w-full">
 
     <div id="toast-container"></div>
 
-    <header class="glass-panel p-4 sticky top-0 z-40 flex justify-between items-center px-4 md:px-8 border-b-0 rounded-b-2xl">
-        <div class="flex items-center gap-3">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0-.99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd" /></svg>
-            <div class="flex flex-col">
-                <h1 class="text-xl font-black uppercase tracking-widest text-white leading-tight">Vault<span class="gold-text">Tracker</span></h1>
-                <p id="header-username" class="hidden text-[10px] gold-text font-black uppercase tracking-widest"></p>
+    <header class="glass-panel p-3 sm:p-4 sticky top-0 z-40 flex justify-between items-center px-3 sm:px-8 border-b-0 rounded-b-2xl w-full max-w-[100vw]">
+        <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 sm:h-8 sm:w-8 text-yellow-400 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0-.99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd" /></svg>
+            <div class="flex flex-col truncate">
+                <h1 class="text-base sm:text-xl font-black uppercase tracking-widest text-white leading-tight truncate">Vault<span class="gold-text hidden sm:inline">Tracker</span></h1>
+                <p id="header-username" class="hidden text-[8px] sm:text-[10px] gold-text font-black uppercase tracking-widest truncate max-w-[80px] sm:max-w-[150px]"></p>
             </div>
         </div>
         
-        <div id="wallet-balances" class="hidden flex items-center gap-4">
-            <div class="flex gap-2">
-                <div class="bg-red-500/10 border border-red-500/30 px-3 py-1 rounded-xl text-right hidden lg:block">
-                    <p class="text-[9px] text-red-400 uppercase tracking-widest font-bold">Spent / <span id="freq-label">Month</span></p>
-                    <p id="spent-period" class="text-sm font-bold text-red-500">0</p>
+        <div id="wallet-balances" class="hidden flex items-center gap-2 sm:gap-4 flex-shrink">
+            <div class="flex gap-1 sm:gap-2">
+                <div class="bg-zinc-900 border border-zinc-700 px-2 sm:px-3 py-1 rounded-lg sm:rounded-xl text-right">
+                    <p class="text-[8px] sm:text-[9px] text-zinc-500 uppercase tracking-widest font-bold hidden sm:block">Disposable Cash</p>
+                    <p class="text-[8px] sm:text-[9px] text-zinc-500 uppercase tracking-widest font-bold sm:hidden">Cash</p>
+                    <p id="disp-cash" class="text-xs sm:text-sm font-bold text-white">0</p>
                 </div>
-                <div class="bg-zinc-900 border border-zinc-700 px-3 py-1 rounded-xl text-right">
-                    <p class="text-[9px] text-zinc-500 uppercase tracking-widest font-bold">Disposable Cash</p>
-                    <p id="disp-cash" class="text-sm font-bold text-white">0</p>
-                </div>
-                <div class="bg-yellow-500/10 border border-yellow-500/30 px-3 py-1 rounded-xl text-right">
-                    <p class="text-[9px] text-yellow-600 uppercase tracking-widest font-bold">Savings Wallet</p>
-                    <p id="save-wallet" class="text-sm font-bold gold-text">0</p>
+                <div class="bg-yellow-500/10 border border-yellow-500/30 px-2 sm:px-3 py-1 rounded-lg sm:rounded-xl text-right">
+                    <p class="text-[8px] sm:text-[9px] text-yellow-600 uppercase tracking-widest font-bold hidden sm:block">Savings Wallet</p>
+                    <p class="text-[8px] sm:text-[9px] text-yellow-600 uppercase tracking-widest font-bold sm:hidden">Vault</p>
+                    <p id="save-wallet" class="text-xs sm:text-sm font-bold gold-text">0</p>
                 </div>
             </div>
             
-            <div class="flex items-center border-l border-zinc-700 pl-4 ml-2 gap-4">
+            <div class="flex items-center border-l border-zinc-700 pl-2 sm:pl-4 gap-2 sm:gap-4">
                 <button onclick="toggleTheme()" class="text-zinc-400 hover:text-yellow-500 transition-colors focus:outline-none">
-                    <svg id="icon-moon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>
-                    <svg id="icon-sun" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                </button>
-                <div class="flex flex-col gap-1 items-end border-l border-zinc-700 pl-4">
-                    <button onclick="handleLogout()" class="text-[10px] font-bold text-zinc-400 uppercase tracking-wider transition-colors hover:text-white">Log Out</button>
-                    <button onclick="triggerResetApp()" class="text-[10px] font-black text-red-500 uppercase tracking-wider transition-colors hover:text-red-400">Wipe Data</button>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <main id="auth-screen" class="max-w-md mx-auto p-6 mt-12 animate-fade-up">
-        <div class="card-dark p-8 rounded-3xl text-center">
-            <h2 id="auth-title" class="text-3xl font-black text-white mb-2">Welcome Back</h2>
-            <p id="auth-subtitle" class="text-zinc-400 mb-8 text-sm">Sign in to sync your finances.</p>
-            
-            <div class="space-y-4 mb-6 text-left">
-                <div id="signup-name-field" class="hidden animate-fade-up">
-                    <label class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Your Full Name</label>
-                    <input type="text" id="auth-username" placeholder="e.g. John Doe" class="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-xl focus:border-yellow-500 outline-none text-white mt-1">
-                </div>
-                <div>
-                    <label class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Email Address</label>
-                    <input type="email" id="auth-email" placeholder="you@example.com" class="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-xl focus:border-yellow-500 outline-none text-white mt-1">
-                </div>
-                <div>
-                    <label class="text-[10px] font-bold text-zinc-500 uppercase tracking-widest ml-1">Password</label>
-                    <input type="password" id="auth-pass" placeholder="••••••••" class="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-xl focus:border-yellow-500 outline-none text-white mt-1">
-                </div>
-            </div>
-
-            <button id="btn-login" onclick="handleLogin()" class="w-full gold-bg text-yellow-950 py-4 rounded-xl font-black hover:scale-105 transition-transform">SIGN IN</button>
-            <button id="btn-signup" onclick="executeSignup()" class="hidden w-full gold-bg text-yellow-950 py-4 rounded-xl font-black hover:scale-105 transition-transform">CREATE ACCOUNT</button>
-            
-            <p id="auth-toggle-text" class="text-sm text-zinc-500 mt-6">Don't have an account? <a onclick="toggleAuthMode(true)" class="text-yellow-500 font-bold hover:underline cursor-pointer">Sign up</a></p>
-            <p id="auth-login-text" class="hidden text-sm text-zinc-500 mt-6">Already have an account? <a onclick="toggleAuthMode(false)" class="text-yellow-500 font-bold hover:underline cursor-pointer">Sign in</a></p>
-        </div>
-    </main>
-
-    <main id="app-dashboard" class="hidden max-w-4xl mx-auto p-4 md:p-6 mt-6">
-        
-        <div id="income-manager" class="mb-8 animate-fade-up">
-            <h2 class="text-sm font-bold text-zinc-500 uppercase tracking-widest mb-4">Income Streams</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div id="salary-container" class="card-dark p-6 rounded-2xl flex flex-col justify-center min-h-[140px]">
-                    <div id="salary-setup-state" class="text-center cursor-pointer hover:text-blue-400 transition-colors" onclick="openSalarySetupModal()">
-                        <div class="w-12 h-12 bg-blue-500/10 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">💼</div>
-                        <h3 class="font-black text-white uppercase mb-1">Add Fixed Salary</h3>
-                        <p class="text-[10px] text-zinc-400">Track a monthly salary automatically.</p>
-                    </div>
-                    <div id="salary-active-state" class="hidden flex flex-col items-center text-center gap-3">
-                        <div class="w-full flex justify-between items-start mb-2">
-                            <div class="text-left">
-                                <h3 class="text-lg font-black text-white uppercase leading-none">Salary</h3>
-                                <p class="text-[10px] text-zinc-500 uppercase font-bold tracking-widest">Month <span id="sal-month-display" class="gold-text"></span>/12</p>
-                            </div>
-                            <p class="text-sm font-black text-white"><span id="sal-amount-display"></span> <span class="text-[10px] text-zinc-500">PKR</span></p>
-                        </div>
-                        <button onclick="triggerSalaryCut()" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-xl font-bold uppercase tracking-wider text-[10px] transition-colors">Collect & Allocate</button>
-                    </div>
-                </div>
-
-                <div id="business-container" class="card-dark p-6 rounded-2xl flex flex-col justify-center min-h-[140px]">
-                    <div id="business-setup-state" class="text-center cursor-pointer hover:text-yellow-400 transition-colors" onclick="setupIncomeBusiness()">
-                        <div class="w-12 h-12 bg-yellow-500/10 text-yellow-500 rounded-full flex items-center justify-center mx-auto mb-3 text-xl">🚀</div>
-                        <h3 class="font-black text-white uppercase mb-1">Add Side Business</h3>
-                        <p class="text-[10px] text-zinc-400">Log variable income manually.</p>
-                    </div>
-                    <div id="business-active-state" class="hidden flex flex-col gap-3">
-                        <div class="flex justify-between items-center mb-2">
-                            <h3 class="text-lg font-black text-white uppercase leading-none">Business</h3>
-                            <select id="biz-freq" class="bg-zinc-900 border border-zinc-700 px-2 py-1 rounded-md text-white outline-none text-[10px] uppercase font-bold cursor-pointer focus:border-yellow-500">
-                                <option value="Week">Weekly</option>
-                                <option value="Month">Monthly</option>
-                            </select>
-                        </div>
-                        <input type="number" id="biz-amount" placeholder="Amount Earned (PKR)" class="w-full bg-zinc-900 border border-zinc-700 p-3 rounded-xl text-white outline-none focus:border-yellow-500 text-sm">
-                        <button onclick="triggerBusinessCut()" class="w-full gold-bg text-yellow-950 py-3 rounded-xl font-bold uppercase tracking-wider text-[10px] hover:brightness-110">Log & Allocate</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <hr class="border-zinc-800 my-8">
-
-        <div class="mb-10 animate-fade-up">
-            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-                <h2 class="text-sm font-bold text-zinc-500 uppercase tracking-widest">Expenses & Spending</h2>
-                <button onclick="openExpenseModal()" class="bg-red-500/10 text-red-500 border border-red-500/30 px-5 py-2 rounded-lg text-xs font-black uppercase tracking-wider hover:bg-red-500 hover:text-white transition-all w-full sm:w-auto">
-                    - LOG EXPENSE
-                </button>
-            </div>
-            <div class="card-dark p-6 rounded-2xl mb-6 border-l-4 border-l-red-500 flex justify-between items-center bg-gradient-to-r from-red-500/10 to-transparent">
-                <div>
-                    <p class="text-xs text-zinc-400 font-bold uppercase tracking-widest mb-1">Total Spent</p>
-                    <p class="text-[10px] text-zinc-500">This <span id="card-freq-label" class="text-red-400 font-bold uppercase">Month</span></p>
-                </div>
-                <p class="text-3xl md:text-4xl font-black text-red-500" id="card-spent-period">0 <span class="text-sm font-bold text-red-400">PKR</span></p>
-            </div>
-            <h3 class="text-[10px] font-bold text-zinc-600 uppercase tracking-widest mb-3">Recent Transactions</h3>
-            <div id="expenses-list" class="space-y-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3"></div>
-        </div>
-
-        <hr class="border-zinc-800 my-8">
-
-        <div class="flex justify-between items-center mb-10">
-            <h2 class="text-2xl font-black text-white uppercase tracking-widest">Your Vaults</h2>
-            <button onclick="toggleForm()" class="gold-bg px-6 py-3 rounded-full font-bold text-yellow-950 shadow-[0_0_20px_rgba(251,191,36,0.3)] hover:scale-105 transition-transform text-sm">
-                + NEW GOAL
-            </button>
-        </div>
-
-        <div id="setup-form" class="hidden card-dark p-6 md:p-8 rounded-3xl mb-12 border border-zinc-800 animate-fade-up">
-            <h2 class="text-xl font-black mb-6 gold-text uppercase tracking-wide">Target Details</h2>
-            <div class="mb-6">
-                <select id="goal-category" class="w-full bg-zinc-900/50 border border-zinc-700 p-4 rounded-xl focus:border-yellow-500 text-white outline-none cursor-pointer">
-                    <option value="" disabled selected>Select Goal Category...</option>
-                    <option value="📱 Tech & Gadgets">📱 Tech & Gadgets</option>
-                    <option value="🚗 Vehicle">🚗 Vehicle</option>
-                    <option value="✈️ Travel & Vacation">✈️ Travel & Vacation</option>
-                    <option value="🏠 Home Improvement">🏠 Home Improvement</option>
-                    <option value="💰 Emergency Fund">💰 Emergency Fund</option>
-                    <option value="🎯 Other">🎯 Other</option>
-                </select>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <input type="text" id="goal-item" placeholder="What are you buying?" oninput="calculateTimePreview()" class="bg-zinc-900/50 border border-zinc-700 p-4 rounded-xl focus:border-yellow-500 text-white outline-none">
-                <input type="number" id="goal-price" placeholder="Total Price (PKR)" oninput="calculateTimePreview()" class="bg-zinc-900/50 border border-zinc-700 p-4 rounded-xl focus:border-yellow-500 text-white outline-none">
-                <select id="save-freq" onchange="calculateTimePreview()" class="bg-zinc-900/50 border border-zinc-700 p-4 rounded-xl text-white outline-none cursor-pointer">
-                    <option value="Weekly">Weekly</option>
-                    <option value="Monthly">Monthly</option>
-                </select>
-                <input type="number" id="save-amount" placeholder="Target Deposit per term" oninput="calculateTimePreview()" class="bg-zinc-900/50 border border-zinc-700 p-4 rounded-xl focus:border-yellow-500 text-white outline-none">
-            </div>
-            <p id="time-preview" class="text-center font-bold gold-text mt-6 min-h-[1.5rem] tracking-wider uppercase text-sm"></p>
-            <div class="mt-6 flex gap-4">
-                <button onclick="createNewGoal()" class="flex-1 gold-bg text-yellow-950 py-4 rounded-xl font-bold hover:brightness-110">INITIALIZE PLAN</button>
-                <button onclick="toggleForm()" class="flex-1 bg-zinc-800 text-zinc-300 py-4 rounded-xl font-bold hover:bg-zinc-700">CANCEL</button>
-            </div>
-        </div>
-
-        <div id="goals-list" class="space-y-10"></div>
-    </main>
-
-    <div id="salary-setup-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
-        <div class="glass-panel p-8 rounded-3xl text-center max-w-sm w-full">
-            <h3 class="text-2xl font-black mb-2 text-white uppercase tracking-widest">Fixed Salary</h3>
-            <p class="text-zinc-400 mb-6 font-medium text-xs">Enter your fixed Monthly Salary (PKR)</p>
-            <div class="relative mb-8">
-                <span class="absolute left-4 top-1/2 transform -translate-y-1/2 font-bold text-zinc-400">PKR</span>
-                <input type="number" id="setup-salary-input" class="w-full bg-zinc-900 border-2 border-zinc-700 p-4 pl-14 rounded-xl text-white text-xl font-black text-right outline-none">
-            </div>
-            <div class="flex gap-4">
-                <button onclick="confirmSalarySetup()" class="flex-1 gold-bg text-yellow-950 py-4 rounded-xl font-black">SAVE</button>
-                <button onclick="closeModal('salary-setup-modal')" class="flex-1 bg-zinc-800 text-zinc-300 py-4 rounded-xl font-bold">CANCEL</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="income-cut-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
-        <div class="glass-panel p-8 rounded-3xl text-center max-w-sm w-full">
-            <h3 class="text-2xl font-black mb-2 text-white uppercase tracking-widest">Allocate Savings</h3>
-            <p class="text-zinc-400 mb-6 font-medium text-sm">Income logged: <span id="income-cut-display" class="gold-text font-bold"></span> PKR.</p>
-            <div class="relative mb-8">
-                <span class="absolute left-4 top-1/2 transform -translate-y-1/2 font-bold text-zinc-400">PKR</span>
-                <input type="number" id="income-cut-input" class="w-full bg-zinc-900 border-2 border-zinc-700 p-4 pl-14 rounded-xl text-white text-xl font-black text-right outline-none">
-            </div>
-            <div class="flex gap-4">
-                <button onclick="confirmIncomeCut()" class="flex-1 gold-bg text-yellow-950 py-4 rounded-xl font-black">CONFIRM</button>
-                <button onclick="closeModal('income-cut-modal')" class="flex-1 bg-zinc-800 text-zinc-300 py-4 rounded-xl font-bold">CANCEL</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="expense-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
-        <div class="glass-panel p-8 rounded-3xl text-center max-w-sm w-full border border-red-500/30">
-            <h3 class="text-2xl font-black mb-2 text-white uppercase tracking-widest">Log Expense</h3>
-            <div class="space-y-4 mb-8 text-left">
-                <select id="exp-source" class="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-xl text-white outline-none"><option value="disposable">Disposable Cash Wallet</option><option value="savings">Savings Wallet</option></select>
-                <input type="text" id="exp-purpose" placeholder="Purpose" class="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-xl text-white outline-none">
-                <input type="number" id="exp-amount" placeholder="Amount" class="w-full bg-zinc-900 border border-zinc-700 p-4 rounded-xl text-white outline-none">
-            </div>
-            <div class="flex gap-4">
-                <button onclick="processExpense()" class="flex-1 bg-red-600 text-white py-4 rounded-xl font-black">DEDUCT</button>
-                <button onclick="closeModal('expense-modal')" class="flex-1 bg-zinc-800 text-zinc-300 py-4 rounded-xl font-bold">CANCEL</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="custom-confirm" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
-        <div class="glass-panel p-8 rounded-3xl text-center max-w-sm w-full">
-            <h3 class="text-2xl font-black mb-8 text-white uppercase tracking-widest">Make Deposit</h3>
-            <input type="number" id="deposit-input" class="w-full bg-zinc-900 border-2 border-zinc-700 p-4 rounded-xl text-white text-xl font-black text-right outline-none mb-8">
-            <div class="flex gap-4">
-                <button onclick="processDeposit()" class="flex-1 gold-bg text-yellow-950 py-4 rounded-xl font-black">DEPOSIT</button>
-                <button onclick="closeModal('custom-confirm')" class="flex-1 bg-zinc-800 text-zinc-300 py-4 rounded-xl font-bold">CANCEL</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="delete-confirm-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
-        <div class="glass-panel p-8 rounded-3xl text-center max-w-sm w-full border border-red-500/30">
-            <h3 class="text-2xl font-black mb-4 text-red-500 uppercase tracking-widest text-center">Delete Goal?</h3>
-            <div class="flex gap-4 mt-8">
-                <button onclick="executeDeleteGoal()" class="flex-1 bg-red-600 text-white py-4 rounded-xl font-black">DELETE</button>
-                <button onclick="closeModal('delete-confirm-modal')" class="flex-1 bg-zinc-800 text-zinc-300 py-4 rounded-xl font-bold">CANCEL</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="reset-confirm-modal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-md px-4">
-        <div class="glass-panel p-8 rounded-3xl text-center max-w-sm w-full border border-red-500/50">
-            <h3 class="text-2xl font-black mb-8 text-white uppercase tracking-widest">Wipe All Data?</h3>
-            <div class="flex flex-col gap-3">
-                <button onclick="executeResetApp()" class="w-full bg-red-600 text-white py-4 rounded-xl font-black">YES, WIPE DATA</button>
-                <button onclick="closeModal('reset-confirm-modal')" class="w-full bg-zinc-800 text-zinc-300 py-4 rounded-xl font-bold">CANCEL</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // --- 0. THEME SWITCHER LOGIC ---
-        let isLightMode = localStorage.getItem('vt_theme') === 'light';
-        function applyTheme() {
-            if (isLightMode) {
-                document.body.classList.add('light-theme');
-                document.getElementById('icon-moon').classList.add('hidden');
-                document.getElementById('icon-sun').classList.remove('hidden');
-            } else {
-                document.body.classList.remove('light-theme');
-                document.getElementById('icon-moon').classList.remove('hidden');
-                document.getElementById('icon-sun').classList.add('hidden');
-            }
-        }
-        function toggleTheme() {
-            isLightMode = !isLightMode;
-            localStorage.setItem('vt_theme', isLightMode ? 'light' : 'dark');
-            applyTheme();
-        }
-
-        // --- 1. HELPERS & NOTIFICATIONS ---
-        function showToast(m, t='error'){
-            const c=document.getElementById('toast-container'); const e=document.createElement('div');
-            e.className=`toast ${t==='success'?'toast-success':t==='info'?'toast-info':''}`; e.innerText=m;
-            c.appendChild(e); setTimeout(() => {if(c.contains(e)) e.remove();}, 3500);
-        }
-        function closeModal(id){ document.getElementById(id).classList.add('hidden'); }
-        function openModal(id){ document.getElementById(id).classList.remove('hidden'); }
-
-        // --- 2. AUTHENTICATION WITH LOCAL DATABASE ---
-        let currentUser = localStorage.getItem('vt_active_user');
-        let currentUsername = localStorage.getItem('vt_active_name');
-
-        let incomeState = JSON.parse(localStorage.getItem('vt_income_data')) || {
-            hasSalary: false, hasBusiness: false, salaryAmount: 0, salaryMonth: 1, disposableCash: 0, savingsWallet: 0, expenses: [], spentThisPeriod: 0, frequencyLabel: 'Month'
-        };
-
-        let allGoals = JSON.parse(localStorage.getItem('fluidSavingsData')) || [];
-        let activeGoalIdForDeposit = null, goalToDelete = null, pendingIncomeProcess = { type: null, totalAmount: 0, freq: 'Month' };
-
-        window.onload = () => {
-            applyTheme();
-            if (currentUser) showDashboard();
-        };
-
-        function toggleAuthMode(isSignup) {
-            document.getElementById('auth-title').innerText = isSignup ? "Create Account" : "Welcome Back";
-            document.getElementById('auth-subtitle').innerText = isSignup ? "Enter your details to get started." : "Sign in to sync your finances.";
-            document.getElementById('signup-name-field').classList.toggle('hidden', !isSignup);
-            document.getElementById('btn-login').classList.toggle('hidden', isSignup);
-            document.getElementById('btn-signup').classList.toggle('hidden', !isSignup);
-            document.getElementById('auth-toggle-text').classList.toggle('hidden', isSignup);
-            document.getElementById('auth-login-text').classList.toggle('hidden', !isSignup);
-        }
-
-        function handleLogin() {
-            const email = document.getElementById('auth-email').value.trim();
-            const pass = document.getElementById('auth-pass').value;
-            
-            // Pull the "database" of registered users
-            let usersDB = JSON.parse(localStorage.getItem('vt_users_db')) || {};
-
-            if(usersDB[email] && usersDB[email].password === pass) {
-                // Login Success: Retrieve specific data for this email
-                localStorage.setItem('vt_active_user', email);
-                localStorage.setItem('vt_active_name', usersDB[email].name);
-                currentUser = email;
-                currentUsername = usersDB[email].name;
-                showDashboard();
-            } else { 
-                showToast("Invalid email or password."); 
-            }
-        }
-
-        function executeSignup() {
-            const name = document.getElementById('auth-username').value.trim();
-            const email = document.getElementById('auth-email').value.trim();
-            const pass = document.getElementById('auth-pass').value;
-            
-            if(name.length > 1 && email.length > 3 && pass.length >= 4) {
-                let usersDB = JSON.parse(localStorage.getItem('vt_users_db')) || {};
-                
-                // Prevent duplicate accounts
-                if(usersDB[email]) {
-                    showToast("Account already exists! Please Sign in.", "info");
-                    return;
-                }
-
-                // Save new user to the local "database"
-                usersDB[email] = { name: name, password: pass };
-                localStorage.setItem('vt_users_db', JSON.stringify(usersDB));
-
-                // Log the new user in instantly
-                localStorage.setItem('vt_active_user', email);
-                localStorage.setItem('vt_active_name', name);
-                currentUser = email; 
-                currentUsername = name;
-                
-                showToast("Account created!", "success");
-                setTimeout(() => showDashboard(), 1000);
-            } else { 
-                showToast("Please fill all fields (password min 4 chars)."); 
-            }
-        }
-
-        function handleLogout() { 
-            localStorage.removeItem('vt_active_user'); 
-            localStorage.removeItem('vt_active_name'); // Clear active session, but keep the DB
-            location.reload(); 
-        }
-        
-        function triggerResetApp() { openModal('reset-confirm-modal'); }
-        function executeResetApp() { localStorage.clear(); location.reload(); }
-
-        function showDashboard() {
-            closeModal('auth-screen');
-            document.getElementById('app-dashboard').classList.remove('hidden');
-            document.getElementById('wallet-balances').classList.remove('hidden');
-            
-            if(currentUsername) {
-                const headName = document.getElementById('header-username');
-                headName.innerText = currentUsername;
-                headName.classList.remove('hidden');
-            }
-
-            renderIncomeSection(); renderExpenses(); renderGoals(); updateHeaderBalances();
-        }
-
-        // --- 3. INCOME ---
-        function renderIncomeSection() {
-            const sActive = document.getElementById('salary-active-state'), sSetup = document.getElementById('salary-setup-state');
-            const bActive = document.getElementById('business-active-state'), bSetup = document.getElementById('business-setup-state');
-            
-            if (incomeState.hasSalary) {
-                sSetup.classList.add('hidden'); sActive.classList.remove('hidden');
-                document.getElementById('sal-month-display').innerText = incomeState.salaryMonth;
-                document.getElementById('sal-amount-display').innerText = incomeState.salaryAmount.toLocaleString();
-            } else { sSetup.classList.remove('hidden'); sActive.classList.add('hidden'); }
-
-            if (incomeState.hasBusiness) {
-                bSetup.classList.add('hidden'); bActive.classList.remove('hidden');
-            } else { bSetup.classList.remove('hidden'); bActive.classList.add('hidden'); }
-        }
-
-        function openSalarySetupModal() { document.getElementById('setup-salary-input').value = ''; openModal('salary-setup-modal'); }
-        function confirmSalarySetup() {
-            const a = parseFloat(document.getElementById('setup-salary-input').value);
-            if (!a || a <= 0) return showToast("Invalid salary.");
-            incomeState.hasSalary = true; incomeState.salaryAmount = a; incomeState.salaryMonth = 1; incomeState.frequencyLabel = 'Month';
-            saveIncomeData(); renderIncomeSection(); updateHeaderBalances(); closeModal('salary-setup-modal');
-        }
-        function setupIncomeBusiness() { incomeState.hasBusiness = true; saveIncomeData(); renderIncomeSection(); }
-
-        function triggerSalaryCut() {
-            if (incomeState.salaryMonth > 12) {
-                showToast("12-Month Plan Completed!", 'info');
-                incomeState.hasSalary = false; saveIncomeData(); renderIncomeSection(); return;
-            }
-            pendingIncomeProcess = { type: 'salary', totalAmount: incomeState.salaryAmount, freq: 'Month' };
-            openIncomeCutModal(pendingIncomeProcess.totalAmount);
-        }
-        function triggerBusinessCut() {
-            const a = parseFloat(document.getElementById('biz-amount').value);
-            if (isNaN(a) || a <= 0) return showToast("Invalid revenue.");
-            pendingIncomeProcess = { type: 'business', totalAmount: a, freq: document.getElementById('biz-freq').value };
-            openIncomeCutModal(pendingIncomeProcess.totalAmount);
-        }
-        function openIncomeCutModal(t) {
-            document.getElementById('income-cut-display').innerText = t.toLocaleString();
-            document.getElementById('income-cut-input').value = (t * 0.2).toFixed(0); openModal('income-cut-modal');
-        }
-        function confirmIncomeCut() {
-            const t = pendingIncomeProcess.totalAmount, s = parseFloat(document.getElementById('income-cut-input').value);
-            if (isNaN(s) || s < 0 || s > t) return showToast("Invalid allocation.");
-            if (incomeState.disposableCash > 0) {
-                incomeState.savingsWallet += incomeState.disposableCash;
-                showToast(`Auto-Sweep: ${incomeState.disposableCash.toLocaleString()} PKR moved to Savings!`, 'info');
-                incomeState.disposableCash = 0;
-            }
-            incomeState.spentThisPeriod = 0; incomeState.frequencyLabel = pendingIncomeProcess.freq;
-            incomeState.disposableCash += (t - s); incomeState.savingsWallet += s;
-            if (pendingIncomeProcess.type === 'salary') incomeState.salaryMonth++;
-            else document.getElementById('biz-amount').value = '';
-            saveIncomeData(); renderIncomeSection(); updateHeaderBalances(); closeModal('income-cut-modal');
-            setTimeout(() => showToast("Income processed!", "success"), 1000);
-        }
-
-        // --- 4. EXPENSES ---
-        function openExpenseModal() { document.getElementById('exp-purpose').value = ''; document.getElementById('exp-amount').value = ''; openModal('expense-modal'); }
-        function processExpense() {
-            const src = document.getElementById('exp-source').value, p = document.getElementById('exp-purpose').value, a = parseFloat(document.getElementById('exp-amount').value);
-            if (!p || isNaN(a) || a <= 0) return showToast("Invalid input.");
-            if (src === 'disposable') {
-                if (a > incomeState.disposableCash) return showToast("Insufficient Cash.");
-                incomeState.disposableCash -= a;
-            } else {
-                if (a > incomeState.savingsWallet) return showToast("Insufficient Savings.");
-                incomeState.savingsWallet -= a;
-            }
-            incomeState.spentThisPeriod += a;
-            incomeState.expenses.unshift({ id: Date.now(), source: src, purpose: p, amount: a, date: new Date().toLocaleDateString() });
-            saveIncomeData(); updateHeaderBalances(); renderExpenses(); closeModal('expense-modal'); showToast("Expense logged.", "success");
-        }
-        function renderExpenses() {
-            const l = document.getElementById('expenses-list'); l.innerHTML = '';
-            if (!incomeState.expenses.length) { l.innerHTML = `<p class="text-xs text-zinc-600 italic">No recent expenses.</p>`; return; }
-            incomeState.expenses.slice(0, 3).forEach(e => {
-                const i = document.createElement('div'); i.className = "card-dark p-4 rounded-xl flex flex-col justify-center border-l-2 border-red-500/50";
-                i.innerHTML = `<div class="flex justify-between items-start mb-1"><p class="font-bold text-white text-sm truncate pr-2">${e.purpose}</p><p class="text-red-400 font-bold text-sm">- ${e.amount.toLocaleString()}</p></div><p class="text-[9px] text-zinc-500 uppercase">From ${e.source==='disposable'?'Cash':'Savings'}</p>`;
-                l.appendChild(i);
-            });
-        }
-        function updateHeaderBalances() {
-            document.getElementById('disp-cash').innerText = incomeState.disposableCash.toLocaleString();
-            document.getElementById('save-wallet').innerText = incomeState.savingsWallet.toLocaleString();
-            document.getElementById('spent-period').innerText = incomeState.spentThisPeriod.toLocaleString();
-            document.getElementById('freq-label').innerText = incomeState.frequencyLabel;
-            document.getElementById('card-spent-period').innerHTML = `${incomeState.spentThisPeriod.toLocaleString()} <span class="text-sm font-bold text-red-400">PKR</span>`;
-            document.getElementById('card-freq-label').innerText = incomeState.frequencyLabel;
-        }
-        function saveIncomeData() { localStorage.setItem('vt_income_data', JSON.stringify(incomeState)); }
-
-        // --- 5. VAULTS ---
-        function toggleForm() { document.getElementById('setup-form').classList.toggle('hidden'); document.getElementById('time-preview').innerText = ''; }
-        function calculateTimePreview() {
-            const p = parseFloat(document.getElementById('goal-price').value), a = parseFloat(document.getElementById('save-amount').value), i = document.getElementById('goal-item').value;
-            if (i && p > 0 && a > 0) {
-                const t = Math.ceil(p/a), u = document.getElementById('save-freq').value === 'Weekly' ? (t===1?'week':'weeks') : (t===1?'month':'months');
-                document.getElementById('time-preview').innerText = `Takes ${t} ${u} to buy ${i}`;
-            } else document.getElementById('time-preview').innerText = '';
-        }
-        function createNewGoal() {
-            const c = document.getElementById('goal-category').value, i = document.getElementById('goal-item').value, p = parseFloat(document.getElementById('goal-price').value), a = parseFloat(document.getElementById('save-amount').value);
-            if(!c || !i || !p || !a) return showToast("Complete all fields.");
-            allGoals.unshift({ id: Date.now(), category: c, item: i, price: p, targetAmount: a, totalSaved: 0 });
-            saveSavingsData(); toggleForm();
-            ['goal-item', 'goal-price', 'save-amount', 'goal-category'].forEach(id => document.getElementById(id).value = '');
-        }
-        function renderGoals() {
-            const c = document.getElementById('goals-list'); c.innerHTML = '';
-            if (!allGoals.length) return;
-            allGoals.forEach((g) => {
-                const b = Math.ceil(g.price/g.targetAmount), p = Math.min((g.totalSaved/g.price)*100, 100), r = Math.max(g.price-g.totalSaved, 0), done = r<=0;
-                const d = document.createElement('div'); d.className = `card-dark rounded-[2rem] p-6 md:p-8 animate-fade-up ${done ? 'border-yellow-500/50' : ''}`;
-                const badge = `<span class="inline-block bg-zinc-800 text-zinc-400 text-[10px] px-2 py-1 rounded-md font-bold uppercase mb-3">${g.category}</span>`;
-                if (done) {
-                    d.innerHTML = `<div class="text-center py-8">${badge}<h2 class="text-4xl font-black text-white uppercase mb-2">Saved!</h2><p class="text-zinc-400 mb-8">${g.item} Funded.</p><button onclick="triggerDeleteGoal(${g.id})" class="text-red-400 text-xs font-bold uppercase tracking-widest">Delete</button></div>`;
-                } else {
-                    d.innerHTML = `<div class="flex justify-between items-start mb-4"><div>${badge}<h3 class="text-3xl font-black uppercase text-white leading-none mb-2">${g.item}</h3><p class="text-zinc-400 font-medium tracking-tight"><span class="gold-text font-bold">${r.toLocaleString()} PKR</span> Remaining</p></div><button onclick="triggerDeleteGoal(${g.id})" class="text-zinc-600 hover:text-red-500">✕</button></div><div class="flex items-center gap-4 mb-8"><div class="flex-1 bg-zinc-900/50 p-4 rounded-2xl"><div class="flex justify-between text-[10px] font-black uppercase mb-3"><span class="text-white">${p.toFixed(1)}%</span><span class="gold-text">${g.totalSaved.toLocaleString()} / ${g.price.toLocaleString()}</span></div><div class="progress-track"><div class="progress-fill" style="width: ${p}%"></div></div></div><button onclick="openDepositModal(${g.id})" class="h-full px-6 py-4 gold-bg rounded-2xl font-black text-yellow-950 uppercase text-xs">ADD</button></div><div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-3">
-                        ${Array.from({length: b}).map((_, i) => {
-                            const st = i * g.targetAmount, en = (i+1) * g.targetAmount;
-                            let f = 0, sv = 0; if (g.totalSaved >= en) { f = 100; sv = g.targetAmount; } else if (g.totalSaved > st) { f = ((g.totalSaved - st)/g.targetAmount)*100; sv = g.totalSaved - st; }
-                            const fin = f === 100; return `<div onclick="openDepositModal(${g.id})" class="h-12 w-full box-base ${fin?'box-saved text-yellow-950':''}">${!fin && f>0 ? `<div class="box-fill" style="height:${f}%"></div>`:''}<span class="box-text">${sv>0?sv.toLocaleString():i+1}</span></div>`;
-                        }).join('')}</div>`;
-                }
-                c.appendChild(d);
-            });
-        }
-        function openDepositModal(id) { const g=allGoals.find(v=>v.id===id); activeGoalIdForDeposit=id; document.getElementById('deposit-input').value=Math.min(g.targetAmount, g.price-g.totalSaved); openModal('custom-confirm'); }
-        function processDeposit() {
-            const a=parseFloat(document.getElementById('deposit-input').value);
-            if(isNaN(a)||a<=0) return showToast("Invalid amount.");
-            if(a>incomeState.savingsWallet) return showToast("Insufficient Savings Wallet funds.");
-            const i=allGoals.findIndex(v=>v.id===activeGoalIdForDeposit);
-            if(i>-1) { incomeState.savingsWallet-=a; allGoals[i].totalSaved=Math.min(allGoals[i].totalSaved+a, allGoals[i].price); saveIncomeData(); saveSavingsData(); updateHeaderBalances(); closeModal('custom-confirm'); showToast("Deposited!", "success"); }
-        }
-        function triggerDeleteGoal(id){ goalToDelete=id; openModal('delete-confirm-modal'); }
-        function executeDeleteGoal(){ if(goalToDelete){ allGoals=allGoals.filter(v=>v.id!==goalToDelete); saveSavingsData(); closeModal('delete-confirm-modal'); goalToDelete=null; showToast("Deleted.", "success"); }}
-        function saveSavingsData() { localStorage.setItem('fluidSavingsData', JSON.stringify(allGoals)); renderGoals(); }
-    </script>
-</body>
-</html>
+                    <svg id="icon-moon" xmlns="http://www
